@@ -23,6 +23,7 @@ kotlin {
             dependencies {
                 implementation(project(":common"))
                 implementation(compose.desktop.currentOs)
+                implementation(files("plugin/KRPlugin.jar"))
             }
         }
         val jvmTest by getting

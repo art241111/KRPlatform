@@ -18,4 +18,4 @@ pluginManagement {
 
 rootProject.name = "KRPlatform"
 
-include(":android", ":desktop", ":common")
+include(":android", ":desktop", ":common", ":KRobot",":KRobot:KAS",":KRobot:tcpClient")
