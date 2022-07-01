@@ -1,12 +1,13 @@
 package pluginLoader
 
 import KRPlugin
+import client.ClientsContext
 import robot.RobotsContext
 import java.io.File
 import java.net.MalformedURLException
 
 class PluginLoader {
-    fun load(robotsContext: RobotsContext): Map<String, KRPlugin> {
+    fun load(robotsContext: RobotsContext, clientsContext: ClientsContext): Map<String, KRPlugin> {
         val pluginDir = File("plugins")
         val pluginClasses: MutableMap<String, KRPlugin> = mutableMapOf()
 
@@ -19,6 +20,7 @@ class PluginLoader {
                     val result = plugin.load(jar)
                     if (result && plugin.plugin != null) {
                         plugin.plugin!!.setRobotsContext(robotsContext)
+                        plugin.plugin!!.setClientsContext(clientsContext)
                         pluginClasses[plugin.pluginInfo.pluginName] = plugin.plugin!!
                     }
                 } catch (e: MalformedURLException) {
