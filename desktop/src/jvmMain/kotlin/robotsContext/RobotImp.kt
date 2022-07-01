@@ -1,27 +1,38 @@
 package robotsContext
 
+import KRobot
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import robot.Robot
 
-class RobotImp: Robot {
-    override val dataHandler: StateFlow<String>
-        get() = TODO("Not yet implemented")
-    override val isConnect: StateFlow<Boolean>
-        get() = TODO("Not yet implemented")
+class RobotImp(
+    val coroutineScope: CoroutineScope,
+    override val ip: String = "197.0.0.1",
+    override val port: Int = 9
+) : Robot {
+    val kRobot = KRobot(coroutineScope)
+
+    override val dataHandler: SharedFlow<String> = kRobot.incomingText
+    override val isConnect: StateFlow<Boolean> = kRobot.isConnect
 
     override fun connect() {
-        TODO("Not yet implemented")
+        coroutineScope.launch(Dispatchers.IO) {
+            kRobot.connect(ip, port)
+        }
     }
 
     override fun disconnect() {
-        TODO("Not yet implemented")
+        kRobot.disconnect()
     }
 
     override fun send(message: String) {
-        TODO("Not yet implemented")
+        kRobot.send(message)
     }
 
-    override suspend fun sendWithRequest(message: String): String {
-        TODO("Not yet implemented")
-    }
+//    override suspend fun sendWithRequest(message: String): String {
+//
+//    }
 }

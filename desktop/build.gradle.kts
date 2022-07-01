@@ -1,6 +1,5 @@
 import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("multiplatform")
@@ -24,6 +23,10 @@ kotlin {
                 implementation(project(":common"))
                 implementation(compose.desktop.currentOs)
                 implementation(files("plugin/KRPlugin.jar"))
+
+                implementation(project(":KRobot"))
+                implementation(project(":KRobot:KAS"))
+                implementation(project(":KRobot:tcpClient"))
             }
         }
         val jvmTest by getting
