@@ -1,4 +1,4 @@
-package pluginLoader
+package plugin.info
 
 import java.io.File
 import java.io.InputStream
@@ -6,15 +6,15 @@ import java.util.*
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 
-class PluginInfo {
-    var mainClassDir: String = ""
-    var pluginName: String = ""
-        private set
-
-    fun loadProperty(file: File): Boolean {
+object PluginInfoBuilder {
+    fun load(file: File): PluginInfo? {
         var result: Properties? = null
         val jar = JarFile(file)
         val entries = jar.entries()
+
+        val fileName: String = file.name
+        var mainClassDir = ""
+        var pluginName = ""
 
         while (entries.hasMoreElements()) {
             val entry: JarEntry = entries.nextElement()
@@ -38,7 +38,7 @@ class PluginInfo {
         if (pluginClassName == null || pluginClassName.isEmpty()) {
 //            throw PluginLoadException("Missing property main.class")
             println("Missing property main.class")
-            return false
+            return null
         } else {
             mainClassDir = pluginClassName
         }
@@ -51,7 +51,14 @@ class PluginInfo {
 //        } else {
 //            this.pluginName = pluginName
 //        }
-        this.pluginName = "pluginName"
-        return true
+        pluginName = "pluginName"
+
+        jar.close()
+
+        return PluginInfo(
+            fileName = fileName,
+            mainClassDir = mainClassDir,
+            pluginName = pluginName
+        )
     }
 }
