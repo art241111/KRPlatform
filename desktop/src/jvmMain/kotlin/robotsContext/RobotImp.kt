@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import robot.Robot
+import robot.RobotData
 
 class RobotImp(
     val coroutineScope: CoroutineScope,
@@ -17,15 +18,18 @@ class RobotImp(
 
     override val dataHandler: SharedFlow<String> = kRobot.incomingText
     override val isConnect: StateFlow<Boolean> = kRobot.isConnect
+    override fun getInformation(): RobotData? {
+        return kRobot.data?.let { RobotDataImpl.create(it) }
+    }
 
-    override fun connect() {
+    fun connect() {
         coroutineScope.launch(Dispatchers.IO) {
             kRobot.connect(ip, port)
         }
     }
 
-    override fun disconnect() {
-        kRobot.disconnect()
+    fun disconnect(endMessage: String) {
+        kRobot.disconnect(endMessage)
     }
 
     override fun send(message: String) {

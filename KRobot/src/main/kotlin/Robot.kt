@@ -1,5 +1,4 @@
 import com.github.art241111.tcpClient.Client
-import com.github.art241111.tcpClient.connection.Status
 import com.github.poluka.kControlLibrary.Command
 import com.github.poluka.kControlLibrary.move.JMove
 import com.github.poluka.kControlLibrary.points.Point
@@ -60,10 +59,6 @@ class KRobot(
 
             setPositionHandler()
         }
-    }
-
-    fun disconnect() {
-        disconnect(stopSymbol = "q")
     }
 
     fun send(command: Command) {

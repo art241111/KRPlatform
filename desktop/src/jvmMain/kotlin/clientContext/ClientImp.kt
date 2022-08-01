@@ -17,14 +17,14 @@ class ClientImp(
     override val dataHandler: SharedFlow<String> = client.incomingText
     override val isConnect: StateFlow<Boolean> = client.isConnect
 
-    override fun connect() {
+    fun connect() {
         coroutineScope.launch(Dispatchers.IO) {
             client.connect(ip, port)
         }
     }
 
-    override fun disconnect() {
-        client.disconnect()
+    fun disconnect(endMessage: String) {
+        client.disconnect(endMessage)
     }
 
     override fun send(message: String) {
