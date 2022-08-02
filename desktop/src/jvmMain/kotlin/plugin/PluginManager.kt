@@ -40,6 +40,18 @@ class PluginManager(coroutineScope: CoroutineScope) {
         }
     }
 
+    fun loadPlugin(jar: File) {
+        val localPluginDir = File("$LOCAL_PLUGIN_DIR\\${jar.name}")
+        Files.copy(jar.toPath(), localPluginDir.toPath(), StandardCopyOption.REPLACE_EXISTING)
+
+        val plug = pluginLoader.loadPlugin(localPluginDir)
+        if (plug != null) {
+            val m = plugins.value.toMutableMap()
+            m[plug.first] = plug.second
+            plugins.value = m
+        }
+    }
+
     fun loadPlugins(directory: String) {
         GlobalScope.launch {
             val pluginDir = File(directory)

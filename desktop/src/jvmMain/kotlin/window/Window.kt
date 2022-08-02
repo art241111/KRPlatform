@@ -7,12 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.window.ApplicationScope
-import view.ActionIcon.ActionIcon
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowPlacement
-import androidx.compose.ui.window.rememberWindowState
+import androidx.compose.ui.window.*
 import data.AppIcons
+import view.ActionIcon.ActionIcon
 import view.ActionText.ActionText
 
 
@@ -20,7 +17,7 @@ import view.ActionText.ActionText
 fun ApplicationScope.Window(
     icon: ActionIcon,
     menuBar: List<ActionText> = listOf(),
-    content: @Composable ColumnScope.() -> Unit,
+    content: @Composable ColumnScope.(scope: FrameWindowScope) -> Unit,
 ) {
     val onClose = ::exitApplication
 
@@ -60,13 +57,15 @@ fun ApplicationScope.Window(
         icon = icon.icon,
         onCloseRequest = ::exitApplication,
         state = state,
-        undecorated = true) {
+        undecorated = true
+    ) {
+        val scope = this
         Column {
             AppWindowTitleBar(
                 icon, minimizingIcon, maximizingIcon, closeIcon, menuBar
             )
 
-            content()
+            content(scope)
         }
     }
 }

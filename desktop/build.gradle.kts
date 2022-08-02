@@ -27,6 +27,11 @@ kotlin {
                 implementation(project(":KRobot"))
                 implementation(project(":KRobot:KAS"))
                 implementation(project(":KRobot:tcpClient"))
+
+                // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-swing
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+
             }
         }
         val jvmTest by getting
