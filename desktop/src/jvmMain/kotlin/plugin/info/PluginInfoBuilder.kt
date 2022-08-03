@@ -13,7 +13,7 @@ object PluginInfoBuilder {
         val entries = jar.entries()
 
         val fileName: String = file.name
-        var mainClassDir = ""
+        var mainClassDir = jar.name
         var pluginName = ""
 
         while (entries.hasMoreElements()) {

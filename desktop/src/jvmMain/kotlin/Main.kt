@@ -1,33 +1,80 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 import androidx.compose.foundation.layout.Row
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.application
 import applicationMenu.ApplicationMenu
 import data.AppIcons
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import plugin.PluginManager
 import screens.PluginManagerScreen
 import view.ActionIcon.ActionIcon
 import view.fileManager.DialogFile
 import window.Window
+import java.io.File
 
 
+@OptIn(ExperimentalComposeUiApi::class)
 fun main() = application {
 
     val coroutineScope = rememberCoroutineScope()
-    val pluginManager = remember { PluginManager(coroutineScope) }
+    val pluginManager = remember {
+        PluginManager(
+            coroutineScope = coroutineScope,
+            localPluginDir = "C:\\Users\\AG\\Desktop\\Platform\\KRPlatform\\desktop\\plugins"
+        )
+    }
     val plugins = pluginManager.plugins.collectAsState()
     val showPluginIndex = remember { mutableStateOf(-1) }
+    var pluginDir by remember { mutableStateOf("") }
 
     val appIcon = ActionIcon(
         icon = painterResource(AppIcons.APP_ICON),
         description = "Robowizard",
         leftClick = {
-            pluginManager.loadPlugins("C:\\Users\\AG\\Desktop\\Platform\\KRobotHandler\\build\\libs")
-        }
+            coroutineScope.launch(Dispatchers.IO) {
+                if (showPluginIndex.value >= 0) {
+                    if (pluginDir != "") {
+                        pluginManager.loadPlugin(File(pluginDir))
+                    } else {
+                        val pluginList = plugins.value.values
+                        pluginManager.loadLocalPlugin(pluginList.elementAt(showPluginIndex.value).pluginInfo.fileName)
+                    }
+                }
+            }
+        },
+        rightClick = mapOf(
+            Pair(
+                first = {
+                    var directory by remember { mutableStateOf("") }
+                    OutlinedTextField(
+                        value = directory,
+                        onValueChange = {
+                            directory = it
+                        },
+                        modifier = Modifier.onPreviewKeyEvent {
+                            when {
+                                (it.key == androidx.compose.ui.input.key.Key.Enter) -> {
+                                    pluginDir = directory
+                                    true
+                                }
+                                else -> false
+                            }
+                        },
+                        label = { Text("Путь к плагину") },
+                        singleLine = true,
+                    )
+                },
+                second = {}
+            )
+        )
     )
     Window(
         icon = appIcon,
@@ -47,7 +94,9 @@ fun main() = application {
 
                             if (files.isNotEmpty()) {
                                 files.forEach { file ->
-                                    pluginManager.loadPlugin(file)
+                                    coroutineScope.launch(Dispatchers.IO) {
+                                        pluginManager.loadPlugin(file)
+                                    }
                                 }
                             }
                         }
@@ -65,7 +114,9 @@ fun main() = application {
                     )
                 }
                 else -> {
-                    plugins.value.values.toList()[showPluginIndex.value].plugin?.content()
+                    if (plugins.value.values.size > showPluginIndex.value) {
+                        plugins.value.values.toList()[showPluginIndex.value].plugin?.content()
+                    }
                 }
             }
 
