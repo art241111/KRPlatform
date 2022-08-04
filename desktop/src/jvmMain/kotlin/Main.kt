@@ -84,7 +84,16 @@ fun main() = application {
         val scope = it
         Row {
             ApplicationMenu(
-                menuItems = listOf(),
+                pluginsMap = plugins,
+                onAddPlugin = {
+                    showPluginName.value = "loadFiles"
+                },
+                onSelectPlugin = {
+                    showPluginName.value = it
+                },
+                onGoHome = {
+                    showPluginName.value = "home"
+                }
             )
 
             when (showPluginName.value) {
@@ -124,12 +133,6 @@ fun main() = application {
                 }
             }
 
-
-//            Column(Modifier.fillMaxSize()) {
-//                for ((name, value) in plugins.value) {
-//                    value.plugin?.content()
-//                }
-//            }
         }
 
     }
