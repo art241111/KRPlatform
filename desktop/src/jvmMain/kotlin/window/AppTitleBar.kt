@@ -1,8 +1,10 @@
 package window
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,6 +17,7 @@ import view.ActionIcon.ActionIconView
 import view.ActionText.ActionText
 import view.ActionText.ActionTextView
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FrameWindowScope.AppWindowTitleBar(
     icon: ActionIcon,
@@ -23,12 +26,17 @@ fun FrameWindowScope.AppWindowTitleBar(
     closeIcon: ActionIcon,
     menuBar: List<ActionText>
 ) = WindowDraggableArea {
-    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        Modifier.fillMaxWidth()
+            .height(30.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         ActionIconView(
             icon,
             height = 30.dp,
             width = 30.dp,
-            contentColor = Color.Red
+            contentColor = Color.Red,
+            selectColor = Color.Transparent
         )
 
         Box(modifier = Modifier.weight(1f)) {

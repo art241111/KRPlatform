@@ -1,11 +1,14 @@
 package view.ActionIcon
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
 import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,7 +29,8 @@ fun ActionIconView(
     width: Dp = 45.dp,
     height: Dp = 25.dp,
     contentColor: Color = contentColorFor(backgroundColor),
-    iconPadding: Dp = 7.dp
+    selectColor: Color = Color.LightGray,
+    iconPadding: Dp = 9.dp
 ) {
     var expand by remember { mutableStateOf(false) }
     DropdownMenu(expanded = expand, onDismissRequest = { expand = false }) {
@@ -38,10 +42,14 @@ fun ActionIconView(
             }
         }
     }
+    var active by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
+            .fillMaxHeight()
             .size(width = width, height = height)
+            .onPointerEvent(PointerEventType.Enter) { active = true }
+            .onPointerEvent(PointerEventType.Exit) { active = false }
             .onPointerEvent(PointerEventType.Press) {
                 when {
                     it.buttons.isSecondaryPressed -> {
@@ -57,12 +65,14 @@ fun ActionIconView(
         shape = RectangleShape,
         border = BorderStroke(0.dp, color = MaterialTheme.colors.background),
         elevation = 0.dp,
-        contentColor = contentColor
+        contentColor = contentColor,
+        backgroundColor = if (active) selectColor else Color.Transparent
     ) {
-        Icon(
-            modifier = Modifier.padding(iconPadding),
-            painter = actionIcon.icon,
-            contentDescription = actionIcon.description
-        )
+        Box(modifier = Modifier.size(8.dp).padding(iconPadding), contentAlignment = Alignment.Center) {
+            Icon(
+                painter = actionIcon.icon,
+                contentDescription = actionIcon.description
+            )
+        }
     }
 }

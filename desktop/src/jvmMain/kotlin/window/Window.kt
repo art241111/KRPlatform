@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import data.AppIcons
 import view.ActionIcon.ActionIcon
@@ -17,6 +20,7 @@ import view.ActionText.ActionText
 fun ApplicationScope.Window(
     icon: ActionIcon,
     menuBar: List<ActionText> = listOf(),
+    onClose: () -> Unit = ::exitApplication,
     content: @Composable ColumnScope.(scope: FrameWindowScope) -> Unit,
 ) {
     val onClose = ::exitApplication
@@ -33,9 +37,13 @@ fun ApplicationScope.Window(
         leftClick = {
             state.placement = if (state.placement == WindowPlacement.Floating) {
                 iconMax.value = AppIcons.MAXIMIZING_ICON_FULLSCREEN
+                state.position = WindowPosition(0.dp, 0.dp)
                 WindowPlacement.Maximized
             } else {
                 iconMax.value = AppIcons.MAXIMIZING_ICON_FLOAT
+                state.position = WindowPosition(Alignment.Center)
+                state.size = DpSize(400.dp, 400.dp)
+
                 WindowPlacement.Floating
             }
         },
@@ -55,7 +63,7 @@ fun ApplicationScope.Window(
 
     Window(
         icon = icon.icon,
-        onCloseRequest = ::exitApplication,
+        onCloseRequest = onClose,
         state = state,
         undecorated = true
     ) {

@@ -1,6 +1,7 @@
 package window
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import view.ActionIcon.ActionIcon
 import view.ActionIcon.ActionIconView
 
@@ -12,11 +13,14 @@ fun ControlButtons(
     closeIcon: ActionIcon,
 ) {
     // Minimizing
-   ActionIconView(minimizingIcon)
+    ActionIconView(minimizingIcon)
 
     // Maximizing
     ActionIconView(maximizingIcon)
 
     // Close
-    ActionIconView(closeIcon)
+    ActionIconView(
+        closeIcon,
+        selectColor = Color.Red
+    )
 }
