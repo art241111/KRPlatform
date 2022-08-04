@@ -34,7 +34,7 @@ fun main() = application {
         )
     }
     val plugins = pluginManager.plugins.collectAsState()
-    val showPluginIndex = remember { mutableStateOf(-1) }
+    val showPluginName = remember { mutableStateOf("home") }
     var pluginDir by remember { mutableStateOf("") }
 
     val appIcon = ActionIcon(
@@ -42,14 +42,14 @@ fun main() = application {
         description = "Robowizard",
         leftClick = {
             coroutineScope.launch(Dispatchers.IO) {
-                if (showPluginIndex.value >= 0) {
+//                if (showPluginIndex.value >= 0) {
                     if (pluginDir != "") {
                         pluginManager.loadPlugin(File(pluginDir))
                     } else {
-                        val pluginList = plugins.value.values
-                        pluginManager.loadLocalPlugin(pluginList.elementAt(showPluginIndex.value).pluginInfo.fileName)
+                        val pluginList = plugins.value
+                        pluginList[showPluginName.value]?.pluginInfo?.let { pluginManager.loadLocalPlugin(it.fileName) }
                     }
-                }
+//                }
             }
         },
         rightClick = mapOf(
@@ -87,12 +87,12 @@ fun main() = application {
                 menuItems = listOf(),
             )
 
-            when (showPluginIndex.value) {
-                -2 -> {
+            when (showPluginName.value) {
+                "loadFiles" -> {
                     DialogFile(
                         scope = scope,
                         onResult = { files ->
-                            showPluginIndex.value = -1
+                            showPluginName.value = "home"
 
                             if (files.isNotEmpty()) {
                                 files.forEach { file ->
@@ -104,20 +104,22 @@ fun main() = application {
                         }
                     )
                 }
-                -1 -> {
+                "home" -> {
                     PluginManagerScreen(
                         pluginsMap = plugins,
                         onAddPlugin = {
-                            showPluginIndex.value = -2
+                            showPluginName.value = "loadFiles"
                         },
                         onSelectPlugin = {
-                            showPluginIndex.value = it
+                            showPluginName.value = it
                         }
                     )
                 }
                 else -> {
-                    if (plugins.value.values.size > showPluginIndex.value) {
-                        plugins.value.values.toList()[showPluginIndex.value].plugin?.content()
+                    val pluginsList = plugins.value
+
+                    if (pluginsList.containsKey(showPluginName.value)) {
+                        plugins.value[showPluginName.value]?.plugin?.content()
                     }
                 }
             }

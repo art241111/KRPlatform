@@ -16,7 +16,7 @@ import plugin.Plugin
 fun PluginManagerScreen(
     pluginsMap: State<Map<String, Plugin>>,
     onAddPlugin: () -> Unit,
-    onSelectPlugin: (index: Int) -> Unit,
+    onSelectPlugin: (name: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val plugins by pluginsMap
@@ -26,7 +26,7 @@ fun PluginManagerScreen(
             PluginView(
                 pluginName = plugin.pluginInfo.pluginName,
                 onSelect = {
-                    onSelectPlugin(index)
+                    onSelectPlugin(plugins.keys.elementAt(index))
                 }
             )
         }
