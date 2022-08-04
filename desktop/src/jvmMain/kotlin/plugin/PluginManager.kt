@@ -8,6 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import parameterContext.ParameterContextImpl
 import robot.RobotsContext
 import robotsContext.RobotsContextImp
 import java.io.File
@@ -15,15 +16,17 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 class PluginManager(
-    private val coroutineScope: CoroutineScope,
-    private val localPluginDir: String
+    coroutineScope: CoroutineScope,
+    private val localPluginDir: File,
+    localParametersFile: File,
 ) {
     private val _plugins = MutableStateFlow(mapOf<String, Plugin>())
     val plugins: StateFlow<Map<String, Plugin>> = _plugins
 
     private val robotsContext: RobotsContext = RobotsContextImp(coroutineScope)
     private val clientsContext: ClientsContext = ClientsContextImp(coroutineScope)
-    private val pluginLoader = PluginLoader(robotsContext, clientsContext)
+    private val parameterContext = ParameterContextImpl(coroutineScope, localParametersFile)
+    private val pluginLoader = PluginLoader(robotsContext, clientsContext, parameterContext)
 
     init {
         coroutineScope.launch(Dispatchers.IO) {
@@ -31,8 +34,13 @@ class PluginManager(
         }
     }
 
-    suspend fun loadLocalPlugins() {
-        loadPlugins(localPluginDir)
+    private suspend fun loadLocalPlugins() {
+        val jars: Array<File>? = localPluginDir.listFiles { file -> file.isFile && file.name.endsWith(".jar") }
+        if (!jars.isNullOrEmpty()) {
+            for (jar in jars) {
+                loadLocalPlugin(jar.name)
+            }
+        }
     }
 
     private suspend fun removeContainsPlugin(jar: File) {
@@ -48,7 +56,7 @@ class PluginManager(
     }
 
     suspend fun loadLocalPlugin(name: String) {
-        val jar = File("$localPluginDir\\$name")
+        val jar = File("${localPluginDir.toPath()}\\$name")
         removeContainsPlugin(jar)
 
         val plug = pluginLoader.loadPlugin(jar)
@@ -59,21 +67,14 @@ class PluginManager(
         }
     }
 
-    //C:\Users\AG\Desktop\Platform\ReportCreator\build\libs\ReportCreator-jvm-1.0-SNAPSHOT.jar
     suspend fun loadPlugin(jar: File) {
-        coroutineScope.launch(Dispatchers.IO) {
-            val jarName = jar.name
-            removeContainsPlugin(jar)
+        val jarName = jar.name
+        removeContainsPlugin(jar)
 
-            try {
-                val localPluginDir = File("$localPluginDir\\${jarName}")
-                Files.copy(jar.toPath(), localPluginDir.toPath(), StandardCopyOption.REPLACE_EXISTING)
-            } catch (e: Exception) {
-                print(e)
-            }
-            loadLocalPlugin(jarName)
-        }
-
+        val localPluginDir = File("${localPluginDir.toPath()}\\${jarName}")
+        Files.createDirectories(localPluginDir.toPath().parent)
+        Files.copy(jar.toPath(), localPluginDir.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        loadLocalPlugin(jarName)
     }
 
     suspend fun loadPlugins(directory: String) {

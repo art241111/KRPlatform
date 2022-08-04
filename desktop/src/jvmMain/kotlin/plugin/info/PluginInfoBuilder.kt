@@ -43,15 +43,13 @@ object PluginInfoBuilder {
             mainClassDir = pluginClassName
         }
 
-//        val pluginName = props.getProperty("plugin.name")
-//        if (pluginName == null || pluginName.isEmpty()) {
-////            throw PluginLoadException("Missing property button.text")
-//            println("Missing property pluginName")
-//            return false
-//        } else {
-//            this.pluginName = pluginName
-//        }
-        pluginName = "pluginName"
+        val _pluginName = props.getProperty("plugin.name")
+        pluginName = if (_pluginName == null || _pluginName.isEmpty()) {
+            //            throw PluginLoadException("Missing property button.text")
+            "pluginName"
+        } else {
+            _pluginName
+        }
 
         jar.close()
 

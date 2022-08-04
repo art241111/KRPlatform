@@ -17,18 +17,20 @@ import plugin.PluginManager
 import screens.PluginManagerScreen
 import view.ActionIcon.ActionIcon
 import view.fileManager.DialogFile
+import view.fileManager.FileManager
 import window.Window
 import java.io.File
 
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() = application {
-
+    val fileManager = remember { FileManager("${System.getenv("APPDATA")}\\KRPlatform") }
     val coroutineScope = rememberCoroutineScope()
     val pluginManager = remember {
         PluginManager(
             coroutineScope = coroutineScope,
-            localPluginDir = "C:\\Users\\AG\\Desktop\\Platform\\KRPlatform\\desktop\\plugins"
+            localPluginDir = fileManager.localPluginDir,
+            localParametersFile = fileManager.localParameterFile
         )
     }
     val plugins = pluginManager.plugins.collectAsState()

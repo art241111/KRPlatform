@@ -1,31 +1,16 @@
 package plugin
 
 import client.ClientsContext
+import parameterContext.ParameterContextImpl
 import robot.RobotsContext
 import java.io.File
 import java.net.MalformedURLException
 
 class PluginLoader(
     private val robotsContext: RobotsContext,
-    private val clientsContext: ClientsContext
+    private val clientsContext: ClientsContext,
+    private val parameterContext: ParameterContextImpl
 ) {
-    fun loadPlugins(localDur: String): Map<String, Plugin> {
-        val pluginDir = File(localDur)
-        val pluginClasses: MutableMap<String, Plugin> = mutableMapOf()
-
-        val jars: Array<File>? = pluginDir.listFiles { file -> file.isFile && file.name.endsWith(".jar") }
-        jars?.let { println(it.size) }
-        if (!jars.isNullOrEmpty()) {
-            for (jar in jars) {
-                val plug = loadPlugin(jar)
-                if (plug != null) {
-                    pluginClasses[plug.first] = plug.second
-                }
-            }
-        }
-        return pluginClasses
-    }
-
     fun loadPlugin(jar: File): Pair<String, Plugin>? {
         return try {
             val plugin = Plugin()
@@ -33,6 +18,7 @@ class PluginLoader(
             if (result && plugin.plugin != null) {
                 plugin.plugin!!.setRobotsContext(robotsContext)
                 plugin.plugin!!.setClientsContext(clientsContext)
+                plugin.plugin!!.setParameterContext(parameterContext.setName(plugin.pluginInfo.fileName))
                 return Pair(plugin.pluginInfo.fileName, plugin)
             } else {
                 null
