@@ -19,6 +19,7 @@ class PluginLoader(
                 plugin.plugin!!.setRobotsContext(robotsContext)
                 plugin.plugin!!.setClientsContext(clientsContext)
                 plugin.plugin!!.setParameterContext(parameterContext.setName(plugin.pluginInfo.fileName))
+                plugin.pluginInfo.pluginImage = plugin.plugin!!.getPluginImage()
                 return Pair(plugin.pluginInfo.fileName, plugin)
             } else {
                 null

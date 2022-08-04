@@ -16,10 +16,10 @@ object PluginInfoBuilder {
         var mainClassDir = jar.name
         var pluginName = ""
 
+
         while (entries.hasMoreElements()) {
             val entry: JarEntry = entries.nextElement()
             if (entry.name.equals("plugin.properties")) {
-                // That's it! Load props
                 var `is`: InputStream? = null
                 try {
                     `is` = jar.getInputStream(entry)

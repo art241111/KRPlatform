@@ -1,6 +1,9 @@
 package screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -21,19 +24,24 @@ fun PluginManagerScreen(
 ) {
     val plugins by pluginsMap
 
-    LazyVerticalGrid(cells = GridCells.Adaptive(minSize = 200.dp), modifier) {
-        itemsIndexed(plugins.values.toList()) { index, plugin ->
-            PluginView(
-                pluginName = plugin.pluginInfo.pluginName,
-                onSelect = {
-                    onSelectPlugin(plugins.keys.elementAt(index))
-                }
-            )
-        }
+    Box(modifier.fillMaxSize()) {
+        LazyVerticalGrid(
+            cells = GridCells.Adaptive(minSize = 200.dp),
+            contentPadding = PaddingValues(5.dp)
+        ) {
+            itemsIndexed(plugins.values.toList()) { index, plugin ->
+                PluginView(
+                    pluginInfo = plugin.pluginInfo,
+                    onSelect = {
+                        onSelectPlugin(plugins.keys.elementAt(index))
+                    }
+                )
+            }
 
-        item {
-            AddPluginView {
-                onAddPlugin()
+            item {
+                AddPluginView {
+                    onAddPlugin()
+                }
             }
         }
     }
