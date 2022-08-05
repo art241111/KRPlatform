@@ -13,6 +13,8 @@ import applicationMenu.ApplicationMenu
 import data.AppIcons
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import navigation.Navigation
+import navigation.Screens
 import plugin.PluginManager
 import screens.PluginManagerScreen
 import view.ActionIcon.ActionIcon
@@ -34,8 +36,11 @@ fun main() = application {
         )
     }
     val plugins = pluginManager.plugins.collectAsState()
-    val showPluginName = remember { mutableStateOf("home") }
     var pluginDir by remember { mutableStateOf("") }
+
+    val navigation = remember { Navigation() }
+    val actualPluginName by navigation.showPluginName.collectAsState()
+    val actualScreen by navigation.actualScreen.collectAsState()
 
     val appIcon = ActionIcon(
         icon = painterResource(AppIcons.APP_ICON),
@@ -43,12 +48,12 @@ fun main() = application {
         leftClick = {
             coroutineScope.launch(Dispatchers.IO) {
 //                if (showPluginIndex.value >= 0) {
-                    if (pluginDir != "") {
-                        pluginManager.loadPlugin(File(pluginDir))
-                    } else {
-                        val pluginList = plugins.value
-                        pluginList[showPluginName.value]?.pluginInfo?.let { pluginManager.loadLocalPlugin(it.fileName) }
-                    }
+                if (pluginDir != "") {
+                    pluginManager.loadPlugin(File(pluginDir))
+                } else {
+                    val pluginList = plugins.value
+                    pluginList[actualPluginName]?.pluginInfo?.let { pluginManager.loadLocalPlugin(it.fileName) }
+                }
 //                }
             }
         },
@@ -86,23 +91,21 @@ fun main() = application {
             ApplicationMenu(
                 pluginsMap = plugins,
                 onAddPlugin = {
-                    showPluginName.value = "loadFiles"
+                    navigation.loadPlugin()
                 },
-                onSelectPlugin = {
-                    showPluginName.value = it
+                onSelectPlugin = { pluginName ->
+                    navigation.showPlugin(pluginName)
                 },
                 onGoHome = {
-                    showPluginName.value = "home"
+                    navigation.goHome()
                 }
             )
 
-            when (showPluginName.value) {
-                "loadFiles" -> {
+            when (actualScreen) {
+                Screens.LOAD_PLUGIN -> {
                     DialogFile(
                         scope = scope,
                         onResult = { files ->
-                            showPluginName.value = "home"
-
                             if (files.isNotEmpty()) {
                                 files.forEach { file ->
                                     coroutineScope.launch(Dispatchers.IO) {
@@ -113,22 +116,22 @@ fun main() = application {
                         }
                     )
                 }
-                "home" -> {
+                Screens.HOME -> {
                     PluginManagerScreen(
                         pluginsMap = plugins,
                         onAddPlugin = {
-                            showPluginName.value = "loadFiles"
+                            navigation.loadPlugin()
                         },
-                        onSelectPlugin = {
-                            showPluginName.value = it
+                        onSelectPlugin = { pluginName ->
+                            navigation.showPlugin(pluginName)
                         }
                     )
                 }
-                else -> {
+                Screens.SHOW_PLUGIN -> {
                     val pluginsList = plugins.value
 
-                    if (pluginsList.containsKey(showPluginName.value)) {
-                        plugins.value[showPluginName.value]?.plugin?.content()
+                    if (pluginsList.containsKey(actualPluginName)) {
+                        plugins.value[actualPluginName]?.plugin?.content()
                     }
                 }
             }
