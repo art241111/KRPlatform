@@ -1,4 +1,4 @@
-package view.ActionIcon
+package view.actionIcon
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box

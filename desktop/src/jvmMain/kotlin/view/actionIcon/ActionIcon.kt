@@ -1,4 +1,4 @@
-package view.ActionIcon
+package view.actionIcon
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
