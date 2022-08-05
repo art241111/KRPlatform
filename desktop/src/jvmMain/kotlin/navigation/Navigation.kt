@@ -13,26 +13,29 @@ class Navigation {
     private val _showPluginName = MutableStateFlow("")
     val showPluginName: StateFlow<String> = _showPluginName
 
+    fun back() {
+        val oldScreen = _screens.value.toMutableList()
+        oldScreen.removeLast()
+        _screens.value = oldScreen
+        _actualScreen.value = oldScreen.last()
+    }
+
     fun goHome() {
-        _screens.value = listOf(Screens.HOME)
-        _actualScreen.value = Screens.HOME
+        replaceScreen(Screens.HOME)
     }
 
     fun showPlugin(name: String) {
         _showPluginName.value = name
-        _screens.value = listOf(Screens.SHOW_PLUGIN)
-        _actualScreen.value = Screens.SHOW_PLUGIN
+        replaceScreen(Screens.SHOW_PLUGIN)
     }
 
     fun loadPlugin() {
         addScreen(Screens.LOAD_PLUGIN)
     }
 
-    fun back() {
-        val oldScreen = _screens.value.toMutableList()
-        oldScreen.removeLast()
-        _screens.value = oldScreen
-        _actualScreen.value = oldScreen.last()
+    private fun replaceScreen(screens: Screens) {
+        _screens.value = listOf(screens)
+        _actualScreen.value = screens
     }
 
     private fun addScreen(screens: Screens) {
