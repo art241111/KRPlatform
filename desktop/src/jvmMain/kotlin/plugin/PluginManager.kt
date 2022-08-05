@@ -16,7 +16,7 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 class PluginManager(
-    coroutineScope: CoroutineScope,
+    private val coroutineScope: CoroutineScope,
     private val localPluginDir: File,
     localParametersFile: File,
 ) {
@@ -31,6 +31,17 @@ class PluginManager(
     init {
         coroutineScope.launch(Dispatchers.IO) {
             loadLocalPlugins()
+        }
+    }
+
+    fun updatePlugin(pluginName: String, pluginDir: String = "") {
+        coroutineScope.launch(Dispatchers.IO) {
+            if (pluginDir != "") {
+                loadPlugin(File(pluginDir))
+            } else {
+                val pluginList = plugins.value
+                pluginList[pluginName]?.pluginInfo?.let { loadLocalPlugin(it.fileName) }
+            }
         }
     }
 

@@ -1,33 +1,26 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+
 import androidx.compose.runtime.*
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.application
-import applicationMenu.ApplicationMenu
 import data.AppIcons
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import navigation.Navigation
 import navigation.Screens
 import plugin.PluginManager
-import screens.PluginManagerScreen
 import view.actionIcon.ActionIcon
-import view.fileManager.DialogFile
 import view.fileManager.FileManager
-import windowView.Window
-import java.io.File
+import view.textField.SingleOutlinedTextField
+import windows.MainWindow
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 fun main() = application {
+    // File manager - is responsible for working with files located in AppData
     val fileManager = remember { FileManager("${System.getenv("APPDATA")}\\KRPlatform") }
+
+    // Creating a basic coroutine scope
     val coroutineScope = rememberCoroutineScope()
+
+    // Plugin manager - responsible for working with plugins: downloading, deleting and updating
     val pluginManager = remember {
         PluginManager(
             coroutineScope = coroutineScope,
@@ -35,108 +28,42 @@ fun main() = application {
             localParametersFile = fileManager.localParameterFile
         )
     }
-    val plugins = pluginManager.plugins.collectAsState()
+
+    // The variable stores the value of the new directory in which the plugin is located
     var pluginDir by remember { mutableStateOf("") }
 
+    // Navigation - responsible for navigating the application
     val navigation = remember { Navigation() }
-    val actualPluginName by navigation.showPluginName.collectAsState()
-    val actualScreen by navigation.actualScreen.collectAsState()
 
+    // Application icon at the top of the window
     val appIcon = ActionIcon(
         icon = painterResource(AppIcons.APP_ICON),
         description = "Robowizard",
         leftClick = {
-            coroutineScope.launch(Dispatchers.IO) {
-//                if (showPluginIndex.value >= 0) {
-                if (pluginDir != "") {
-                    pluginManager.loadPlugin(File(pluginDir))
-                } else {
-                    val pluginList = plugins.value
-                    pluginList[actualPluginName]?.pluginInfo?.let { pluginManager.loadLocalPlugin(it.fileName) }
-                }
-//                }
+            if (navigation.actualScreen.value == Screens.SHOW_PLUGIN) {
+                pluginManager.updatePlugin(
+                    pluginName = navigation.showPluginName.value,
+                    pluginDir = pluginDir
+                )
             }
         },
         rightClick = mapOf(
             Pair(
                 first = {
-                    var directory by remember { mutableStateOf("") }
-                    OutlinedTextField(
-                        value = directory,
-                        onValueChange = {
-                            directory = it
+                    SingleOutlinedTextField(
+                        onSet = {
+                            pluginDir = it
                         },
-                        modifier = Modifier.onPreviewKeyEvent {
-                            when {
-                                (it.key == androidx.compose.ui.input.key.Key.Enter) -> {
-                                    pluginDir = directory
-                                    true
-                                }
-                                else -> false
-                            }
-                        },
-                        label = { Text("Путь к плагину") },
-                        singleLine = true,
+                        label = "Путь к плагину"
                     )
                 },
                 second = {}
             )
         )
     )
-    Window(
-        icon = appIcon,
-    ) {
-        val scope = it
-        Row {
-            ApplicationMenu(
-                pluginsMap = plugins,
-                onAddPlugin = {
-                    navigation.loadPlugin()
-                },
-                onSelectPlugin = { pluginName ->
-                    navigation.showPlugin(pluginName)
-                },
-                onGoHome = {
-                    navigation.goHome()
-                }
-            )
 
-            when (actualScreen) {
-                Screens.LOAD_PLUGIN -> {
-                    DialogFile(
-                        scope = scope,
-                        onResult = { files ->
-                            if (files.isNotEmpty()) {
-                                files.forEach { file ->
-                                    coroutineScope.launch(Dispatchers.IO) {
-                                        pluginManager.loadPlugin(file)
-                                    }
-                                }
-                            }
-                        }
-                    )
-                }
-                Screens.HOME -> {
-                    PluginManagerScreen(
-                        pluginsMap = plugins,
-                        onAddPlugin = {
-                            navigation.loadPlugin()
-                        },
-                        onSelectPlugin = { pluginName ->
-                            navigation.showPlugin(pluginName)
-                        }
-                    )
-                }
-                Screens.SHOW_PLUGIN -> {
-                    val pluginsList = plugins.value
-
-                    if (pluginsList.containsKey(actualPluginName)) {
-                        plugins.value[actualPluginName]?.plugin?.content()
-                    }
-                }
-            }
-
-        }
-
-    }
+    // The main application window
+    MainWindow(
+        appIcon, navigation, coroutineScope, pluginManager
+    )
 }
