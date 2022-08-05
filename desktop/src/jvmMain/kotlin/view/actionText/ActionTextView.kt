@@ -1,4 +1,4 @@
-package view.ActionText
+package view.actionText
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable

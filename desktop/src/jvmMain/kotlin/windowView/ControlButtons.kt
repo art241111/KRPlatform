@@ -1,9 +1,9 @@
-package window
+package windowView
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import view.ActionIcon.ActionIcon
-import view.ActionIcon.ActionIconView
+import view.actionIcon.ActionIcon
+import view.actionIcon.ActionIconView
 
 
 @Composable

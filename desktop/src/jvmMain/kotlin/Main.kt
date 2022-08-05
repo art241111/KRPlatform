@@ -17,10 +17,10 @@ import navigation.Navigation
 import navigation.Screens
 import plugin.PluginManager
 import screens.PluginManagerScreen
-import view.ActionIcon.ActionIcon
+import view.actionIcon.ActionIcon
 import view.fileManager.DialogFile
 import view.fileManager.FileManager
-import window.Window
+import windowView.Window
 import java.io.File
 
 

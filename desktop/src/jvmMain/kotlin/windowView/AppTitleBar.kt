@@ -1,4 +1,4 @@
-package window
+package windowView
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
@@ -12,10 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.FrameWindowScope
-import view.ActionIcon.ActionIcon
-import view.ActionIcon.ActionIconView
-import view.ActionText.ActionText
-import view.ActionText.ActionTextView
+import view.actionIcon.ActionIcon
+import view.actionIcon.ActionIconView
+import view.actionText.ActionText
+import view.actionText.ActionTextView
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

@@ -1,4 +1,4 @@
-package window
+package windowView
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -12,8 +12,8 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import data.AppIcons
-import view.ActionIcon.ActionIcon
-import view.ActionText.ActionText
+import view.actionIcon.ActionIcon
+import view.actionText.ActionText
 
 
 @Composable

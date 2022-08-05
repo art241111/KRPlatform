@@ -1,4 +1,4 @@
-package view.ActionText
+package view.actionText
 
 data class ActionText(
     val name: String,
