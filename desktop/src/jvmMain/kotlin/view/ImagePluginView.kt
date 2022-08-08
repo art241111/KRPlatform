@@ -28,7 +28,7 @@ fun ImagePluginView(
             Image(bit, contentDescription = "", modifier = Modifier.size(100.dp).padding(imagePadding))
         } else {
             val letters =
-                pluginName.split(" ").map { it.first() }.filterIndexed { index, c -> index < 2 }
+                pluginName.split(" ").map { it.first() }.filterIndexed { index, _ -> index < 2 }
             Text(
                 letters.joinToString("").uppercase(),
                 fontSize = fontSize,

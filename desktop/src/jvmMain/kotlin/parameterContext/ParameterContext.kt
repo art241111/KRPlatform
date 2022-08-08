@@ -83,14 +83,11 @@ class Property(
     companion object {
         fun create(text: String): Property? {
             val split = text.split("::")
-            var name = ""
-            var property = ""
-            var pluginName = ""
             if (split.size >= 2) {
                 val names = split[0].split("$$")
-                pluginName = names[0]
-                name = names[1]
-                property = split[1]
+                val pluginName = names[0]
+                val name = names[1]
+                val property = split[1]
                 return Property(pluginName, name, property)
             }
             return null

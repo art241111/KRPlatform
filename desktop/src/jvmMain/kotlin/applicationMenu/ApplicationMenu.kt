@@ -28,7 +28,7 @@ fun ApplicationMenu(
     val plugins by pluginsMap
     val iconSize = remember { 50.dp }
 
-    Box(Modifier.fillMaxHeight()) {
+    Box(modifier.fillMaxHeight()) {
         Box(
             Modifier.size(iconSize).clickable {
                 onGoHome()

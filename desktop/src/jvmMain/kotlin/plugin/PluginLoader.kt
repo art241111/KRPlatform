@@ -16,9 +16,11 @@ class PluginLoader(
             val plugin = Plugin()
             val result = plugin.load(jar)
             if (result && plugin.plugin != null) {
-                plugin.plugin!!.setRobotsContext(robotsContext)
-                plugin.plugin!!.setClientsContext(clientsContext)
-                plugin.plugin!!.setParameterContext(parameterContext.setName(plugin.pluginInfo.fileName))
+                with(plugin.plugin!!) {
+                    setRobotsContext(robotsContext)
+                    setClientsContext(clientsContext)
+                    setParameterContext(parameterContext.setName(plugin.pluginInfo.fileName))
+                }
                 plugin.pluginInfo.pluginImage = plugin.plugin!!.getPluginImage()
                 return Pair(plugin.pluginInfo.fileName, plugin)
             } else {

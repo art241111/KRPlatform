@@ -25,8 +25,6 @@ fun ApplicationScope.Window(
     onClose: () -> Unit = ::exitApplication,
     content: @Composable ColumnScope.(scope: FrameWindowScope) -> Unit,
 ) {
-    val onClose = ::exitApplication
-
     val state = rememberWindowState()
     val minimizingIcon = ActionIcon(
         leftClick = { state.isMinimized = !state.isMinimized },
