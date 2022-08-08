@@ -5,7 +5,7 @@ import parameters.ParametersContext
 import java.io.File
 import java.nio.charset.Charset
 
-private const val FILE_NAME = "Data"
+private const val PARAMETER_SPL = "&&&"
 
 class ParameterContextImpl(
     private val coroutineScope: CoroutineScope,
@@ -13,14 +13,10 @@ class ParameterContextImpl(
 ) : ParametersContext {
     private var pluginName: String = ""
 
-    private fun getPropertyName(name: String): String {
-        return "$pluginName$$$name::"
-    }
-
     override fun load(name: String): String {
         val properies = saveFile
             .readText(Charset.defaultCharset())
-            .split("&&&")
+            .split(PARAMETER_SPL)
             .mapNotNull {
                 Property.create(it)
             }
@@ -37,7 +33,7 @@ class ParameterContextImpl(
     override fun save(name: String, content: String) {
         val properies = saveFile
             .readText(Charset.defaultCharset())
-            .split("&&&")
+            .split(PARAMETER_SPL)
             .mapNotNull {
                 Property.create(it)
             }
@@ -66,7 +62,7 @@ class ParameterContextImpl(
         }
 
 
-        saveFile.writeText(properies.joinToString("&&&"))
+        saveFile.writeText(properies.joinToString(PARAMETER_SPL))
     }
 
     fun setName(fileName: String): ParametersContext {

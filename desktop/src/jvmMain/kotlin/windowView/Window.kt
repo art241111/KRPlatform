@@ -1,7 +1,9 @@
 package windowView
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,12 +70,16 @@ fun ApplicationScope.Window(
         undecorated = true
     ) {
         val scope = this
-        Column {
-            AppWindowTitleBar(
-                icon, minimizingIcon, maximizingIcon, closeIcon, menuBar
-            )
+        Card(
+            border = BorderStroke(0.5.dp, Color.LightGray),
+        ) {
+            Column {
+                AppWindowTitleBar(
+                    icon, minimizingIcon, maximizingIcon, closeIcon, menuBar
+                )
 
-            content(scope)
+                content(scope)
+            }
         }
     }
 }

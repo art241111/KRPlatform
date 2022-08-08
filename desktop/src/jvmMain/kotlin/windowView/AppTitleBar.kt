@@ -33,10 +33,11 @@ fun FrameWindowScope.AppWindowTitleBar(
     ) {
         ActionIconView(
             icon,
-            height = 30.dp,
-            width = 30.dp,
+            height = 40.dp,
+            width = 40.dp,
             contentColor = Color.Red,
-            selectColor = Color.Transparent
+            selectColor = Color.Transparent,
+            iconPadding = 6.dp
         )
 
         Box(modifier = Modifier.weight(1f)) {

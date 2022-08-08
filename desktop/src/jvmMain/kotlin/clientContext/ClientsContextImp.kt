@@ -24,15 +24,19 @@ class ClientsContextImp(private val coroutineScope: CoroutineScope) : ClientsCon
     }
 
     override fun disconnect() {
-        TODO("Not yet implemented")
+        disconnect(_clients.last() as ClientImp)
     }
 
     override fun disconnect(ip: String, port: Int, endMessage: String) {
         val _client = isConnected(ip, port)
         if (_client != null) {
-            (_client as ClientImp).disconnect(endMessage)
-            this._clients.remove(_client)
+            disconnect(_client as ClientImp, endMessage)
         }
+    }
+
+    private fun disconnect(client: ClientImp, endMessage: String = "") {
+        client.disconnect(endMessage)
+        _clients.remove(client)
     }
 
     override fun isConnected(ip: String, port: Int): Client? {

@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.StateFlow
 
 class Navigation {
     private val _screens = MutableStateFlow(listOf(Screens.HOME))
-    val screens: StateFlow<List<Screens>> = _screens
 
     private val _actualScreen = MutableStateFlow(_screens.value.last())
     val actualScreen: StateFlow<Screens> = _actualScreen

@@ -23,7 +23,7 @@ class ClientImp(
         }
     }
 
-    fun disconnect(endMessage: String) {
+    fun disconnect(endMessage: String = "") {
         client.disconnect(endMessage)
     }
 

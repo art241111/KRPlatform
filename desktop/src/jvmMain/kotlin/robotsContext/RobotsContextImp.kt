@@ -8,7 +8,7 @@ class RobotsContextImp(private val coroutineScope: CoroutineScope) : RobotsConte
     private val _robots = mutableListOf<Robot>()
     val robots: List<Robot> = _robots
     override fun connect(): Robot {
-        TODO("Not yet implemented")
+        return connect("localhost", 9105)
     }
 
     override fun connect(ip: String, port: Int): Robot {
@@ -24,15 +24,19 @@ class RobotsContextImp(private val coroutineScope: CoroutineScope) : RobotsConte
     }
 
     override fun disconnect() {
-        TODO("Not yet implemented")
+        disconnect(_robots.last() as RobotImp)
     }
 
     override fun disconnect(ip: String, port: Int, endMessage: String) {
         val _robot = isConnected(ip, port)
         if (_robot != null) {
-            (_robot as RobotImp).disconnect(endMessage)
-            this._robots.remove(_robot)
+            disconnect(_robot as RobotImp, endMessage)
         }
+    }
+
+    private fun disconnect(robot: RobotImp, endMessage: String = "") {
+        robot.disconnect(endMessage)
+        _robots.remove(robot)
     }
 
     override fun isConnected(ip: String, port: Int): Robot? {
