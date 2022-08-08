@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import robot.Robot
 import robot.RobotData
 
-class RobotImp(
+class KawasakiRobotImp(
     val coroutineScope: CoroutineScope,
     override val ip: String = "197.0.0.1",
     override val port: Int = 9

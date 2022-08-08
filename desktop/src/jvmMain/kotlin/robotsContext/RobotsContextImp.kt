@@ -16,7 +16,7 @@ class RobotsContextImp(private val coroutineScope: CoroutineScope) : RobotsConte
         return if (robot != null) {
             robot
         } else {
-            robot = RobotImp(coroutineScope, ip, port)
+            robot = KawasakiRobotImp(coroutineScope, ip, port)
             robot.connect()
             _robots.add(robot)
             robot
@@ -24,17 +24,17 @@ class RobotsContextImp(private val coroutineScope: CoroutineScope) : RobotsConte
     }
 
     override fun disconnect() {
-        disconnect(_robots.last() as RobotImp)
+        disconnect(_robots.last() as KawasakiRobotImp)
     }
 
     override fun disconnect(ip: String, port: Int, endMessage: String) {
         val _robot = isConnected(ip, port)
         if (_robot != null) {
-            disconnect(_robot as RobotImp, endMessage)
+            disconnect(_robot as KawasakiRobotImp, endMessage)
         }
     }
 
-    private fun disconnect(robot: RobotImp, endMessage: String = "") {
+    private fun disconnect(robot: KawasakiRobotImp, endMessage: String = "") {
         robot.disconnect(endMessage)
         _robots.remove(robot)
     }

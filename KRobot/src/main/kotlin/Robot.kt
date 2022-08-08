@@ -1,6 +1,5 @@
 import com.github.art241111.tcpClient.Client
 import com.github.poluka.kControlLibrary.Command
-import com.github.poluka.kControlLibrary.move.JMove
 import com.github.poluka.kControlLibrary.points.Point
 import com.github.poluka.kControlLibrary.points.Where
 import kotlinx.coroutines.CoroutineScope
@@ -14,8 +13,6 @@ class KRobot(
     internal val coroutineScope: CoroutineScope,
     var ip: String = "192.168.0.2",
     var port: Int = 9105,
-    var delaySending: Int = 0,
-    var homePoint: Point = Point(),
 ) : Client(coroutineScope) {
     private val _position: MutableStateFlow<Point> = MutableStateFlow(Point())
     val position: StateFlow<Point> = _position
@@ -42,33 +39,21 @@ class KRobot(
     }
 
     suspend fun connect(dataReadStatus: MutableStateFlow<String>? = null) {
-        println("Connect")
         if (port != 0 && ip != "") {
             // Connect to the robot
-
             connect(
                 ip,
                 port,
                 defaultMessage = "as",
-                isWriterLogging = true,
-                isReaderLogging = true
             )
 
-//                data = getData(dataReadStatus)
             getData(dataReadStatus)
-
             setPositionHandler()
         }
     }
 
     fun send(command: Command) {
         send(command.generateCommand())
-    }
-
-    fun moveHome() {
-        if (homePoint != Point()) {
-            send(JMove(homePoint))
-        }
     }
 
     private fun setPositionHandler() {
@@ -91,7 +76,6 @@ class KRobot(
                     _position.value = point
                 }
                 isNextPosition = message.contains("X[mm]")
-//                        _position.value = Point()
             }
         }
     }
