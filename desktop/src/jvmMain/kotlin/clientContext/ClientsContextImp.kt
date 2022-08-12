@@ -39,6 +39,13 @@ class ClientsContextImp(private val coroutineScope: CoroutineScope) : ClientsCon
         _clients.remove(client)
     }
 
+    private fun disconnectAll() {
+        _clients.forEach {
+            (it as ClientImp).disconnect()
+        }
+        _clients.clear()
+    }
+
     override fun isConnected(ip: String, port: Int): Client? {
         val client = _clients.filter { client -> client.ip == ip && client.port == port }
 

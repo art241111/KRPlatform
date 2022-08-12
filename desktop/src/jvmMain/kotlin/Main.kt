@@ -4,13 +4,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.application
 import data.AppIcons
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import navigation.Navigation
 import navigation.Screens
+import navigation.Windows
 import plugin.PluginManager
+import robot.Robot
+import robotsContext.RobotsContextImp
 import view.actionIcon.ActionIcon
 import view.fileManager.FileManager
 import view.textField.SingleOutlinedTextField
 import windows.MainWindow
+import windows.RobotConnectionWindow
 
 
 fun main() = application {
@@ -20,20 +27,42 @@ fun main() = application {
     // Creating a basic coroutine scope
     val coroutineScope = rememberCoroutineScope()
 
-    // Plugin manager - responsible for working with plugins: downloading, deleting and updating
-    val pluginManager = remember {
-        PluginManager(
-            coroutineScope = coroutineScope,
-            localPluginDir = fileManager.localPluginDir,
-            localParametersFile = fileManager.localParameterFile
-        )
-    }
-
     // The variable stores the value of the new directory in which the plugin is located
     var pluginDir by remember { mutableStateOf("") }
 
     // Navigation - responsible for navigating the application
     val navigation = remember { Navigation() }
+
+
+    val robot = remember { MutableStateFlow<Robot?>(null) }
+    val robotsContext = remember {
+        RobotsContextImp(
+            coroutineScope,
+            connectToRobotWindow = { retRobot ->
+                coroutineScope.launch {
+                    navigation.openConnectToRobotWindow()
+                    robot.collectLatest {
+                        if (it != null) {
+                            val _robot = robot.value
+                            robot.value = null
+                            retRobot(_robot!!)
+                            return@collectLatest
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+    // Plugin manager - responsible for working with plugins: downloading, deleting and updating
+    val pluginManager = remember {
+        PluginManager(
+            coroutineScope = coroutineScope,
+            localPluginDir = fileManager.localPluginDir,
+            localParametersFile = fileManager.localParameterFile,
+            robotsContext = robotsContext
+        )
+    }
 
     // Application icon at the top of the window
     val appIcon = ActionIcon(
@@ -62,8 +91,32 @@ fun main() = application {
         )
     )
 
+    val scope = this
     // The main application window
     MainWindow(
-        appIcon, navigation, coroutineScope, pluginManager
+        appIcon,
+        navigation,
+        coroutineScope,
+        pluginManager,
+        onClose = {
+            robotsContext.disconnectAll()
+            scope.exitApplication()
+        }
     )
+
+    val windows = navigation.showAdditionalWindow.collectAsState()
+    if (windows.value.contains(Windows.ROBOT_CONNECT)) {
+        RobotConnectionWindow(
+            icon = appIcon,
+            onConnect = { _robot ->
+                robot.value = _robot
+
+            },
+            coroutineScope = coroutineScope,
+            onClose = {
+                navigation.closeConnectToRobotWindow()
+            },
+            robotsContextImp = robotsContext
+        )
+    }
 }

@@ -15,12 +15,14 @@ class KawasakiRobotImp(
     override val ip: String = "197.0.0.1",
     override val port: Int = 9
 ) : Robot {
-    private val kRobot = KRobot(coroutineScope)
+    val kRobot = KRobot(coroutineScope)
 
     override val dataHandler: SharedFlow<String> = kRobot.incomingText
     override val isConnect: StateFlow<Boolean> = kRobot.isConnect
     override fun getInformation(): RobotData? {
-        return kRobot.data?.let { RobotDataImpl.create(it) }
+        return kRobot.data?.let {
+            RobotDataImpl.create(it)
+        }
     }
 
     fun connect(dataReadStatus: MutableStateFlow<String>? = null) {
@@ -29,7 +31,14 @@ class KawasakiRobotImp(
         }
     }
 
-    fun disconnect(endMessage: String) {
+    fun connect(dataReadStatus: MutableStateFlow<String>? = null, onConnect: () -> Unit) {
+        coroutineScope.launch(Dispatchers.IO) {
+            kRobot.connect(ip, port, dataReadStatus)
+            onConnect()
+        }
+    }
+
+    fun disconnect(endMessage: String = "") {
         kRobot.disconnect(endMessage)
     }
 

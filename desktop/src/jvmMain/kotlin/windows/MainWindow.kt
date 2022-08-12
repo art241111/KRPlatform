@@ -24,6 +24,7 @@ fun ApplicationScope.MainWindow(
     navigation: Navigation,
     coroutineScope: CoroutineScope,
     pluginManager: PluginManager,
+    onClose: () -> Unit = ::exitApplication,
 ) {
     val actualScreen by navigation.actualScreen.collectAsState()
     val actualPluginName by navigation.showPluginName.collectAsState()
@@ -32,6 +33,7 @@ fun ApplicationScope.MainWindow(
 
     Window(
         icon = appIcon,
+        onClose = onClose
     ) {
         val scope = it
         Row {

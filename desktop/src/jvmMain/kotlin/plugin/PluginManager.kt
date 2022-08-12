@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import parameterContext.ParameterContextImpl
 import robot.RobotsContext
-import robotsContext.RobotsContextImp
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -19,14 +18,13 @@ class PluginManager(
     private val coroutineScope: CoroutineScope,
     private val localPluginDir: File,
     localParametersFile: File,
+    robotsContext: RobotsContext,
+    clientsContext: ClientsContext = ClientsContextImp(coroutineScope),
+    parameterContext: ParameterContextImpl = ParameterContextImpl(coroutineScope, localParametersFile),
+    private val pluginLoader: PluginLoader = PluginLoader(robotsContext, clientsContext, parameterContext)
 ) {
     private val _plugins = MutableStateFlow(mapOf<String, Plugin>())
     val plugins: StateFlow<Map<String, Plugin>> = _plugins
-
-    private val robotsContext: RobotsContext = RobotsContextImp(coroutineScope)
-    private val clientsContext: ClientsContext = ClientsContextImp(coroutineScope)
-    private val parameterContext = ParameterContextImpl(coroutineScope, localParametersFile)
-    private val pluginLoader = PluginLoader(robotsContext, clientsContext, parameterContext)
 
     init {
         coroutineScope.launch(Dispatchers.IO) {
