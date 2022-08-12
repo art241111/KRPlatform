@@ -12,8 +12,8 @@ import robot.RobotData
 
 class KawasakiRobotImp(
     private val coroutineScope: CoroutineScope,
-    override val ip: String = "197.0.0.1",
-    override val port: Int = 9
+    override val ip: String = "localhost",
+    override val port: Int = 29
 ) : Robot {
     val kRobot = KRobot(coroutineScope)
 
