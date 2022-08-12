@@ -23,9 +23,11 @@ fun ApplicationScope.Window(
     icon: ActionIcon,
     menuBar: List<ActionText> = listOf(),
     onClose: () -> Unit = ::exitApplication,
+    size: DpSize = DpSize(800.dp, 600.dp),
+    alwaysOnTop: Boolean = false,
     content: @Composable ColumnScope.(scope: FrameWindowScope) -> Unit,
 ) {
-    val state = rememberWindowState()
+    val state = rememberWindowState(size = size)
     val minimizingIcon = ActionIcon(
         leftClick = { state.isMinimized = !state.isMinimized },
         icon = painterResource(AppIcons.MINIMIZING_ICON),
@@ -65,7 +67,8 @@ fun ApplicationScope.Window(
         icon = icon.icon,
         onCloseRequest = onClose,
         state = state,
-        undecorated = true
+        undecorated = true,
+        alwaysOnTop = alwaysOnTop
     ) {
         val scope = this
         Card(

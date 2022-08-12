@@ -1,8 +1,14 @@
 package windows
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,22 +26,31 @@ fun ApplicationScope.RobotConnectionWindow(
     icon: ActionIcon,
     robotsContextImp: RobotsContextImp
 ) {
+    val dataFlow: MutableStateFlow<String> = MutableStateFlow("")
+    val state = dataFlow.collectAsState()
+
     Window(
         onClose = onClose,
-        icon = icon
+        icon = icon,
+        size = DpSize(400.dp, 600.dp),
+        alwaysOnTop = true
     ) {
-        Button(
-            onClick = {
-                coroutineScope.launch {
-                    val dataFlow: MutableStateFlow<String> = MutableStateFlow("")
-                    robotsContextImp.connect(ip = "localhost", port = 9105, dataFlow, onConnect = { robot ->
-                        onConnect(robot)
-                        onClose()
-                    })
+        Column {
+            Button(
+                onClick = {
+                    coroutineScope.launch {
+                        robotsContextImp.connect(ip = "localhost", port = 9105, dataFlow, onConnect = { robot ->
+                            onConnect(robot)
+                            onClose()
+                        })
+                    }
                 }
+            ) {
+                Text("Connect")
             }
-        ) {
-            Text("Connect")
+
+            Spacer(Modifier.weight(1f))
+            Text(state.value)
         }
     }
 }
