@@ -39,7 +39,7 @@ class ClientsContextImp(private val coroutineScope: CoroutineScope) : ClientsCon
         _clients.remove(client)
     }
 
-    private fun disconnectAll() {
+    fun disconnectAll() {
         _clients.forEach {
             (it as ClientImp).disconnect()
         }

@@ -3,6 +3,7 @@
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.application
+import clientContext.ClientsContextImp
 import data.AppIcons
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -54,13 +55,16 @@ fun main() = application {
         )
     }
 
+    val clientsContext = ClientsContextImp(coroutineScope)
+
     // Plugin manager - responsible for working with plugins: downloading, deleting and updating
     val pluginManager = remember {
         PluginManager(
             coroutineScope = coroutineScope,
             localPluginDir = fileManager.localPluginDir,
             localParametersFile = fileManager.localParameterFile,
-            robotsContext = robotsContext
+            robotsContext = robotsContext,
+            clientsContext = clientsContext
         )
     }
 
@@ -100,6 +104,7 @@ fun main() = application {
         pluginManager,
         onClose = {
             robotsContext.disconnectAll()
+            clientsContext.disconnectAll()
             scope.exitApplication()
         }
     )
