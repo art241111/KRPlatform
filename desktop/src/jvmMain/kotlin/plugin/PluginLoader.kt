@@ -1,7 +1,7 @@
 package plugin
 
 import client.ClientsContext
-import parameterContext.ParameterContextImpl
+import plugin.conetexts.parameterContext.ParameterContextImpl
 import robot.RobotsContext
 import java.io.File
 import java.net.MalformedURLException

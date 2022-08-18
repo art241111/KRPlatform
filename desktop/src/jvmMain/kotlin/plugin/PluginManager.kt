@@ -1,14 +1,14 @@
 package plugin
 
 import client.ClientsContext
-import clientContext.ClientsContextImp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import parameterContext.ParameterContextImpl
+import plugin.conetexts.clientContext.ClientsContextImp
+import plugin.conetexts.parameterContext.ParameterContextImpl
 import robot.RobotsContext
 import java.io.File
 import java.nio.file.Files

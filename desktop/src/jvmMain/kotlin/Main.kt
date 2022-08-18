@@ -3,7 +3,6 @@
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.application
-import clientContext.ClientsContextImp
 import data.AppIcons
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -12,14 +11,15 @@ import navigation.Navigation
 import navigation.Screens
 import navigation.Windows
 import plugin.PluginManager
+import plugin.conetexts.clientContext.ClientsContextImp
+import plugin.conetexts.robotsContext.RobotsContextImp
 import robot.Robot
-import robotsContext.RobotsContextImp
+import ui.MainWindow
+import ui.views.actionIcon.ActionIcon
+import ui.views.fileManager.FileManager
+import ui.views.textField.SingleOutlinedTextField
+import ui.windows.robotConnection.RobotConnectionWindow
 import utils.ConnectionSpecificationList
-import view.actionIcon.ActionIcon
-import view.fileManager.FileManager
-import view.textField.SingleOutlinedTextField
-import windows.MainWindow
-import windows.robotConnectionWindow.RobotConnectionWindow
 
 
 fun main() = application {

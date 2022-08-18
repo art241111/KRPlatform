@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import view.fileManager.FileManager
+import ui.views.fileManager.FileManager
 
 object GenerateDefaultIpPort {
     fun generate() = listOf(
