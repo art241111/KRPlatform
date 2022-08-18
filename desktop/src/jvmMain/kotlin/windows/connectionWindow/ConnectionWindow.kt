@@ -12,6 +12,7 @@ import utils.ConnectionSpecification
 import utils.ConnectionSpecificationList
 import view.actionIcon.ActionIcon
 import windowView.Window
+import windows.connectionWindow.entity.ConnectionStatus
 import windows.connectionWindow.screens.AddScreen
 import windows.connectionWindow.screens.ListScreen
 import windows.connectionWindow.views.BackgroundScreen

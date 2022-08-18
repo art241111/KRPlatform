@@ -1,12 +1,14 @@
 package windows.connectionWindow.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -40,15 +42,20 @@ fun AddScreen(
                 singleLine = true
             )
 
-            // TODO: Only numbers
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = port,
-                onValueChange = { text ->
-                    port = text
+                onValueChange = {
+                    port = when (it.toDoubleOrNull()) {
+                        null -> {
+                            port
+                        }
+                        else -> it
+                    }
                 },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 label = { Text("Порт") },
-                singleLine = true
             )
 
         }
