@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import plugin.conetexts.clientContext.ClientsContextImp
+import plugin.conetexts.filesContext.FilesContextImpl
 import plugin.conetexts.parameterContext.ParameterContextImpl
 import robot.RobotsContext
 import java.io.File
@@ -21,7 +22,8 @@ class PluginManager(
     robotsContext: RobotsContext,
     clientsContext: ClientsContext = ClientsContextImp(coroutineScope),
     parameterContext: ParameterContextImpl = ParameterContextImpl(coroutineScope, localParametersFile),
-    private val pluginLoader: PluginLoader = PluginLoader(robotsContext, clientsContext, parameterContext)
+    filesContext: FilesContextImpl,
+    private val pluginLoader: PluginLoader = PluginLoader(robotsContext, clientsContext, parameterContext, filesContext)
 ) {
     private val _plugins = MutableStateFlow(mapOf<String, Plugin>())
     val plugins: StateFlow<Map<String, Plugin>> = _plugins

@@ -15,6 +15,9 @@ class Navigation {
     private val _showAdditionalWindow = MutableStateFlow(listOf<Windows>())
     val showAdditionalWindow: StateFlow<List<Windows>> = _showAdditionalWindow
 
+    private val _actualFileScreen = MutableStateFlow(FilesScreen.NULL)
+    val actualFileScreen: StateFlow<FilesScreen> = _actualFileScreen
+
     fun back() {
         val oldScreen = _screens.value.toMutableList()
         oldScreen.removeLast()
@@ -46,7 +49,11 @@ class Navigation {
     }
 
     fun loadPlugin() {
-        addScreen(Screens.LOAD_PLUGIN)
+        addScreen(FilesScreen.LOAD_PLUGIN)
+    }
+
+    fun loadFile() {
+        addScreen(FilesScreen.LOAD_FILE)
     }
 
     private fun replaceScreen(screens: Screens) {
@@ -54,11 +61,12 @@ class Navigation {
         _actualScreen.value = screens
     }
 
-    private fun addScreen(screens: Screens) {
-        val oldScreen = _screens.value.toMutableList()
-        oldScreen.add(screens)
-        _actualScreen.value = screens
-        _screens.value = oldScreen
+    private fun addScreen(screens: FilesScreen) {
+        _actualFileScreen.value = screens
+    }
+
+    fun backFromFileScreen() {
+        _actualFileScreen.value = FilesScreen.NULL
     }
 }
 

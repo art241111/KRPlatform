@@ -12,6 +12,7 @@ import navigation.Screens
 import navigation.Windows
 import plugin.PluginManager
 import plugin.conetexts.clientContext.ClientsContextImp
+import plugin.conetexts.filesContext.FilesContextImpl
 import plugin.conetexts.robotsContext.RobotsContextImp
 import robot.Robot
 import ui.MainWindow
@@ -20,6 +21,7 @@ import ui.views.fileManager.FileManager
 import ui.views.textField.SingleOutlinedTextField
 import ui.windows.robotConnection.RobotConnectionWindow
 import utils.ConnectionSpecificationList
+import java.io.File
 
 
 fun main() = application {
@@ -59,6 +61,24 @@ fun main() = application {
 
     val clientsContext = ClientsContextImp(coroutineScope)
 
+    val fileLoad = remember { MutableStateFlow<File?>(null) }
+    val filesContext = FilesContextImpl(
+        coroutineScope,
+        loadFileParam = {
+            coroutineScope.launch {
+                navigation.loadFile()
+                fileLoad.collectLatest {
+                    if (it != null) {
+                        val _fileLoad = fileLoad.value
+                        fileLoad.value = null
+                        it(_fileLoad!!)
+                        return@collectLatest
+                    }
+                }
+            }
+        }
+    )
+
     // Plugin manager - responsible for working with plugins: downloading, deleting and updating
     val pluginManager = remember {
         PluginManager(
@@ -66,7 +86,8 @@ fun main() = application {
             localPluginDir = fileManager.localPluginDir,
             localParametersFile = fileManager.localParameterFile,
             robotsContext = robotsContext,
-            clientsContext = clientsContext
+            clientsContext = clientsContext,
+            filesContext = filesContext
         )
     }
 
@@ -108,6 +129,9 @@ fun main() = application {
             robotsContext.disconnectAll()
             clientsContext.disconnectAll()
             scope.exitApplication()
+        },
+        onLoadFile = {
+            fileLoad.value = it
         }
     )
 

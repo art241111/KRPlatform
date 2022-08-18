@@ -1,6 +1,7 @@
 package plugin
 
 import client.ClientsContext
+import plugin.conetexts.filesContext.FilesContextImpl
 import plugin.conetexts.parameterContext.ParameterContextImpl
 import robot.RobotsContext
 import java.io.File
@@ -9,7 +10,8 @@ import java.net.MalformedURLException
 class PluginLoader(
     private val robotsContext: RobotsContext,
     private val clientsContext: ClientsContext,
-    private val parameterContext: ParameterContextImpl
+    private val parameterContext: ParameterContextImpl,
+    private val filesContext: FilesContextImpl
 ) {
     fun loadPlugin(jar: File): Pair<String, Plugin>? {
         return try {
@@ -20,6 +22,7 @@ class PluginLoader(
                     setRobotsContext(robotsContext)
                     setClientsContext(clientsContext)
                     setParameterContext(parameterContext.setName(plugin.pluginInfo.fileName))
+                    setFilesContext(filesContext)
                 }
                 plugin.pluginInfo.pluginImage = plugin.plugin!!.getPluginImage()
                 return Pair(plugin.pluginInfo.fileName, plugin)

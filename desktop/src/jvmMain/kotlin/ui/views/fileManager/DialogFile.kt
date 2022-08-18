@@ -3,9 +3,8 @@ package ui.views.fileManager
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.window.FrameWindowScope
-import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.swing.Swing
 import java.io.File
@@ -17,9 +16,9 @@ class Dialog {
     enum class Mode { LOAD, SAVE }
 }
 
-@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun DialogFile(
+    coroutineScope: CoroutineScope,
     mode: Dialog.Mode = Dialog.Mode.LOAD,
     title: String = "Choisissez un fichier",
     extensions: List<FileNameExtensionFilter> = listOf(),
@@ -27,21 +26,22 @@ fun DialogFile(
     onResult: (files: List<File>) -> Unit
 ) {
     DisposableEffect(Unit) {
-        val job = GlobalScope.launch(Dispatchers.Swing as CoroutineContext) {
+        val job = coroutineScope.launch(Dispatchers.Swing as CoroutineContext) {
             val fileChooser = JFileChooser()
             fileChooser.dialogTitle = title
             fileChooser.isMultiSelectionEnabled = mode == Dialog.Mode.LOAD
             fileChooser.isAcceptAllFileFilterUsed = extensions.isEmpty()
             extensions.forEach { fileChooser.addChoosableFileFilter(it) }
 
-            val returned = if (mode == Dialog.Mode.LOAD) {
-                fileChooser.showOpenDialog(scope.window)
-            } else {
-                fileChooser.showSaveDialog(scope.window)
-            }
+            val returned =
 
-            onResult(when (returned) {
-                JFileChooser.APPROVE_OPTION -> {
+                when (if (mode == Dialog.Mode.LOAD) {
+                    fileChooser.showOpenDialog(scope.window)
+                } else {
+                    fileChooser.showSaveDialog(scope.window)
+                })
+                {
+                    JFileChooser.APPROVE_OPTION -> {
                     if (mode == Dialog.Mode.LOAD) {
                         val files = fileChooser.selectedFiles.filter { it.canRead() }
                         if (files.isNotEmpty()) {
@@ -57,8 +57,8 @@ fun DialogFile(
                         listOf(fileChooser.selectedFile)
                     }
                 }
-                else -> listOf()
-            })
+                    else -> listOf()
+                })
         }
 
         onDispose {
