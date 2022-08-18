@@ -31,20 +31,32 @@ class KRobot(
         send(Where())
     }
 
-    suspend fun connect(ip: String, port: Int, dataReadStatus: MutableStateFlow<String>? = null) {
+    suspend fun connect(
+        ip: String,
+        port: Int,
+        dataReadStatus: MutableStateFlow<String>? = null,
+        onConnectionError: (e: Exception) -> Unit = {},
+        defaultMessage: String = "as"
+    ) {
         this.ip = ip
         this.port = port
 
-        connect(dataReadStatus)
+        connect(dataReadStatus, onConnectionError, defaultMessage)
     }
 
-    suspend fun connect(dataReadStatus: MutableStateFlow<String>? = null) {
+    suspend fun connect(
+        dataReadStatus: MutableStateFlow<String>? = null,
+        onConnectionError: (e: Exception) -> Unit = {},
+        defaultMessage: String = "as"
+    ) {
         if (port != 0 && ip != "") {
             // Connect to the robot
             connect(
                 ip,
                 port,
-                defaultMessage = "as",
+                defaultMessage = defaultMessage,
+                onConnectionError = onConnectionError,
+                isWriterLogging = false
             )
 
             getData(dataReadStatus)

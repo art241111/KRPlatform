@@ -38,7 +38,7 @@ class TCPConnection : Connect {
      * @param port - the port on which the connection will take place
      * @param timeout - connection time, if it is exceeded, the connection failed
      */
-    override fun connect(address: String, port: Int, timeout: Int) {
+    override fun connect(address: String, port: Int, timeout: Int, onConnectionError: (e: Exception) -> Unit) {
         if (_statusState.value != Status.CONNECTING && _statusState.value != Status.COMPLETED) {
             try {
                 // Set connecting status
@@ -53,6 +53,7 @@ class TCPConnection : Connect {
                 _statusState.value = Status.COMPLETED
             } catch (e: Exception) {
                 println(e.message)
+                onConnectionError(e)
 
                 if ((_statusState.value == Status.RECONNECTING) or (socket.isClosed)) {
                     _statusState.value = Status.DISCONNECTED

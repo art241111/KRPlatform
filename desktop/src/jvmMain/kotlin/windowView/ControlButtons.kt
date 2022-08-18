@@ -13,14 +13,21 @@ fun ControlButtons(
     closeIcon: ActionIcon,
 ) {
     // Minimizing
-    ActionIconView(minimizingIcon)
+    ActionIconView(
+        minimizingIcon,
+        contentColor = minimizingIcon.color
+    )
 
     // Maximizing
-    ActionIconView(maximizingIcon)
+    ActionIconView(
+        maximizingIcon,
+        contentColor = maximizingIcon.color
+    )
 
     // Close
     ActionIconView(
         closeIcon,
+        contentColor = closeIcon.color,
         selectColor = Color.Red
     )
 }

@@ -6,6 +6,6 @@ package com.github.art241111.tcpClient.connection
  * @author Artem Gerasimov.
  */
 interface Connect {
-    fun connect(address: String, port: Int, timeout: Int = 2000)
+    fun connect(address: String, port: Int, timeout: Int = 2000, onConnectionError: (e: Exception) -> Unit = {})
     fun disconnect()
 }

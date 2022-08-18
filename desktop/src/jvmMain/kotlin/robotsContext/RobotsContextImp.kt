@@ -32,7 +32,8 @@ class RobotsContextImp(
         ip: String,
         port: Int,
         dataReadStatus: MutableStateFlow<String>?,
-        onConnect: (robot: Robot) -> Unit
+        onConnect: (robot: Robot) -> Unit,
+        onConnectionError: (e: Exception) -> Unit = {},
     ): Robot {
         var robot = isConnected(ip, port)
         return if (robot != null) {
@@ -43,7 +44,8 @@ class RobotsContextImp(
                 dataReadStatus,
                 onConnect = {
                     onConnect(robot)
-                }
+                },
+                onConnectionError = onConnectionError
             )
             _robots.add(robot)
             robot

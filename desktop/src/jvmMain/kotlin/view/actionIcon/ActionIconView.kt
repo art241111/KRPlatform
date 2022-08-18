@@ -1,6 +1,5 @@
 package view.actionIcon
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
@@ -63,7 +62,6 @@ fun ActionIconView(
                 }
             },
         shape = RectangleShape,
-        border = BorderStroke(0.dp, color = MaterialTheme.colors.background),
         elevation = 0.dp,
         contentColor = contentColor,
         backgroundColor = if (active) selectColor else Color.Transparent

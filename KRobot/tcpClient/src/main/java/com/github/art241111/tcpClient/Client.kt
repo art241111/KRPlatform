@@ -7,9 +7,12 @@ import com.github.art241111.tcpClient.reader.RemoteReader
 import com.github.art241111.tcpClient.writer.DefaultRemoteWriter
 import com.github.art241111.tcpClient.writer.RemoteWriter
 import com.github.art241111.tcpClient.writer.Sender
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 /**
  * TCP client.
@@ -51,6 +54,7 @@ open class Client(private val coroutineScope: CoroutineScope) : Sender {
         isWriterLogging: Boolean = false,
         isReaderLogging: Boolean = false,
         defaultMessage: String = "",
+        onConnectionError: (e: Exception) -> Unit = {}
     ) {
         oldAddress = address
         oldPort = port
@@ -59,7 +63,7 @@ open class Client(private val coroutineScope: CoroutineScope) : Sender {
 
         // When the device connects to the server, it creates Reader and Writer
         coroutineScope.launch(Dispatchers.IO) {
-            connection.connect(address, port, timeout)
+            connection.connect(address, port, timeout, onConnectionError)
             createReaderAndWriter(isWriterLogging, isReaderLogging)
             _isConnect.value = true
 

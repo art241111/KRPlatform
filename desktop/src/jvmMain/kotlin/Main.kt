@@ -14,19 +14,21 @@ import navigation.Windows
 import plugin.PluginManager
 import robot.Robot
 import robotsContext.RobotsContextImp
+import utils.ConnectionSpecificationList
 import view.actionIcon.ActionIcon
 import view.fileManager.FileManager
 import view.textField.SingleOutlinedTextField
 import windows.MainWindow
-import windows.RobotConnectionWindow
+import windows.robotConnectionWindow.RobotConnectionWindow
 
 
 fun main() = application {
     // File manager - is responsible for working with files located in AppData
     val fileManager = remember { FileManager("${System.getenv("APPDATA")}\\KRPlatform") }
-
     // Creating a basic coroutine scope
     val coroutineScope = rememberCoroutineScope()
+
+    val connectionSpecificationList = ConnectionSpecificationList(fileManager, coroutineScope)
 
     // The variable stores the value of the new directory in which the plugin is located
     var pluginDir by remember { mutableStateOf("") }
@@ -121,7 +123,8 @@ fun main() = application {
             onClose = {
                 navigation.closeConnectToRobotWindow()
             },
-            robotsContextImp = robotsContext
+            robotsContextImp = robotsContext,
+            connectionSpecificationList = connectionSpecificationList
         )
     }
 }

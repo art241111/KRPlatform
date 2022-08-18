@@ -1,6 +1,7 @@
 package windowView
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,18 +25,20 @@ fun FrameWindowScope.AppWindowTitleBar(
     minimizingIcon: ActionIcon,
     maximizingIcon: ActionIcon,
     closeIcon: ActionIcon,
-    menuBar: List<ActionText>
+    menuBar: List<ActionText>,
+    background: Color = Color.White,
+    contentColor: Color? = null
 ) = WindowDraggableArea {
     Row(
         Modifier.fillMaxWidth()
-            .height(30.dp),
+            .height(30.dp).background(color = background),
         verticalAlignment = Alignment.CenterVertically
     ) {
         ActionIconView(
             icon,
             height = 40.dp,
             width = 40.dp,
-            contentColor = Color.Red,
+            contentColor = contentColor ?: Color.Red,
             selectColor = Color.Transparent,
             iconPadding = 6.dp
         )

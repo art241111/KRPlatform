@@ -1,9 +1,12 @@
 package windowView
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Shapes
+import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,14 +28,16 @@ fun ApplicationScope.Window(
     onClose: () -> Unit = ::exitApplication,
     size: DpSize = DpSize(800.dp, 600.dp),
     alwaysOnTop: Boolean = false,
-    content: @Composable ColumnScope.(scope: FrameWindowScope) -> Unit,
+    background: Color = Color.White,
+    contentColor: Color? = null,
+    content: @Composable() (ColumnScope.(scope: FrameWindowScope) -> Unit),
 ) {
     val state = rememberWindowState(size = size)
     val minimizingIcon = ActionIcon(
         leftClick = { state.isMinimized = !state.isMinimized },
         icon = painterResource(AppIcons.MINIMIZING_ICON),
         description = "-",
-        color = Color.Green
+        color = contentColor ?: Color.Black
     )
     val iconMax = remember { mutableStateOf(AppIcons.MAXIMIZING_ICON_FLOAT) }
     val maximizingIcon = ActionIcon(
@@ -51,7 +56,7 @@ fun ApplicationScope.Window(
         },
         icon = painterResource(iconMax.value),
         description = "■",
-        color = Color.Yellow
+        color = contentColor ?: Color.Black
     )
 
     val closeIcon = ActionIcon(
@@ -60,7 +65,7 @@ fun ApplicationScope.Window(
         },
         icon = painterResource(AppIcons.CLOSE_ICON),
         description = "x",
-        color = Color.Red
+        color = contentColor ?: Color.Black
     )
 
     Window(
@@ -70,16 +75,30 @@ fun ApplicationScope.Window(
         undecorated = true,
         alwaysOnTop = alwaysOnTop
     ) {
-        val scope = this
-        Card(
-            border = BorderStroke(0.5.dp, Color.LightGray),
+        MaterialTheme(
+            colors = lightColors(
+                primary = Color(192, 0, 0)
+            ),
+            shapes = Shapes(small = RoundedCornerShape(50.dp), medium = RoundedCornerShape(10.dp))
         ) {
-            Column {
-                AppWindowTitleBar(
-                    icon, minimizingIcon, maximizingIcon, closeIcon, menuBar
-                )
+            val scope = this
+            Card(
+//                border = BorderStroke(0.5.dp, Color.LightGray),
+                shape = RoundedCornerShape(0)
+            ) {
+                Column {
+                    AppWindowTitleBar(
+                        icon,
+                        minimizingIcon,
+                        maximizingIcon,
+                        closeIcon,
+                        menuBar,
+                        background,
+                        contentColor = contentColor
+                    )
 
-                content(scope)
+                    content(scope)
+                }
             }
         }
     }

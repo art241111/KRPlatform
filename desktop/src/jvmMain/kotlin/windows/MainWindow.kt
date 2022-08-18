@@ -33,59 +33,60 @@ fun ApplicationScope.MainWindow(
 
     Window(
         icon = appIcon,
-        onClose = onClose
-    ) {
-        val scope = it
-        Row {
-            ApplicationMenu(
-                pluginsMap = plugins,
-                onAddPlugin = {
-                    navigation.loadPlugin()
-                },
-                onSelectPlugin = { pluginName ->
-                    navigation.showPlugin(pluginName)
-                },
-                onGoHome = {
-                    navigation.goHome()
-                }
-            )
+        onClose = onClose,
+        content = {
+            val scope = it
+            Row {
+                ApplicationMenu(
+                    pluginsMap = plugins,
+                    onAddPlugin = {
+                        navigation.loadPlugin()
+                    },
+                    onSelectPlugin = { pluginName ->
+                        navigation.showPlugin(pluginName)
+                    },
+                    onGoHome = {
+                        navigation.goHome()
+                    }
+                )
 
-            when (actualScreen) {
-                Screens.LOAD_PLUGIN -> {
-                    DialogFile(
-                        scope = scope,
-                        onResult = { files ->
-                            if (files.isNotEmpty()) {
-                                files.forEach { file ->
-                                    coroutineScope.launch(Dispatchers.IO) {
-                                        pluginManager.loadPlugin(file)
+                when (actualScreen) {
+                    Screens.LOAD_PLUGIN -> {
+                        DialogFile(
+                            scope = scope,
+                            onResult = { files ->
+                                if (files.isNotEmpty()) {
+                                    files.forEach { file ->
+                                        coroutineScope.launch(Dispatchers.IO) {
+                                            pluginManager.loadPlugin(file)
+                                        }
                                     }
                                 }
                             }
-                        }
-                    )
-                }
-                Screens.HOME -> {
-                    PluginManagerScreen(
-                        pluginsMap = plugins,
-                        onAddPlugin = {
-                            navigation.loadPlugin()
-                        },
-                        onSelectPlugin = { pluginName ->
-                            navigation.showPlugin(pluginName)
-                        }
-                    )
-                }
-                Screens.SHOW_PLUGIN -> {
-                    val pluginsList = plugins.value
+                        )
+                    }
+                    Screens.HOME -> {
+                        PluginManagerScreen(
+                            pluginsMap = plugins,
+                            onAddPlugin = {
+                                navigation.loadPlugin()
+                            },
+                            onSelectPlugin = { pluginName ->
+                                navigation.showPlugin(pluginName)
+                            }
+                        )
+                    }
+                    Screens.SHOW_PLUGIN -> {
+                        val pluginsList = plugins.value
 
-                    if (pluginsList.containsKey(actualPluginName)) {
-                        plugins.value[actualPluginName]?.plugin?.content()
+                        if (pluginsList.containsKey(actualPluginName)) {
+                            plugins.value[actualPluginName]?.plugin?.content()
+                        }
                     }
                 }
+
             }
 
-        }
-
-    }
+        },
+    )
 }

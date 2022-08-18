@@ -31,9 +31,13 @@ class KawasakiRobotImp(
         }
     }
 
-    fun connect(dataReadStatus: MutableStateFlow<String>? = null, onConnect: () -> Unit) {
+    fun connect(
+        dataReadStatus: MutableStateFlow<String>? = null,
+        onConnect: () -> Unit,
+        onConnectionError: (e: Exception) -> Unit = {},
+    ) {
         coroutineScope.launch(Dispatchers.IO) {
-            kRobot.connect(ip, port, dataReadStatus)
+            kRobot.connect(ip, port, dataReadStatus, onConnectionError = onConnectionError)
             onConnect()
         }
     }
